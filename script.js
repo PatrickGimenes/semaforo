@@ -3,6 +3,7 @@ const span = document.getElementById("result");
 let leds = [];
 let count = 0;
 let interval;
+let timeout;
 let startTime;
 let endTime;
 
@@ -26,7 +27,7 @@ function turnOn() {
 
   if (count === leds.length) {
     clearInterval(interval);
-    setTimeout(turnOff, timer);
+    timeout = setTimeout(turnOff, timer);
   }
 }
 
@@ -34,10 +35,9 @@ function turnOff() {
   for (let i = 0; i < leds.length; i++) {
     leds[i].className = "circle off";
   }
-
-  startTime = performance.now();
   count = 0;
   button.onclick = stop;
+  startTime = performance.now();
 }
 
 function stop() {
@@ -49,18 +49,27 @@ function stop() {
 }
 
 function restart() {
-  button.onclick = start;
-  span.innerText = "";
-  button.textContent = "Iniciar";
-  count = 0;
-  for (let i = 0; i < leds.length; i++) {
-    leds[i].className = "circle off";
-  }
+  reset();
 }
 
 function gameover() {
+  button.onclick = restart;
   span.innerText = "Muito cedo!";
   clearInterval(interval);
-  button.onclick = restart;
+  clearTimeout(timeout);
   button.textContent = "Reiniciar";
+}
+
+function reset() {
+  clearInterval(interval);
+  clearTimeout(timeout);
+
+  count = 0;
+  span.innerText = "";
+  button.onclick = start;
+  button.textContent = "Iniciar";
+
+  for (let i = 0; i < leds.length; i++) {
+    leds[i].className = "circle off";
+  }
 }
